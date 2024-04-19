@@ -1,0 +1,126 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": ".######",
+ "creation": "2024-04-12 11:19:22.377889",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "farmer_id",
+  "station_id",
+  "sample_no",
+  "qty",
+  "fat",
+  "snf",
+  "water",
+  "column_break_lmds",
+  "clr",
+  "shift",
+  "milk_type",
+  "entry_date",
+  "time",
+  "rate",
+  "amount"
+ ],
+ "fields": [
+  {
+   "fieldname": "farmer_id",
+   "fieldtype": "Int",
+   "label": "farmer id"
+  },
+  {
+   "fieldname": "station_id",
+   "fieldtype": "Data",
+   "label": "station id"
+  },
+  {
+   "fieldname": "sample_no",
+   "fieldtype": "Int",
+   "label": "sample no"
+  },
+  {
+   "fieldname": "qty",
+   "fieldtype": "Float",
+   "label": "qty"
+  },
+  {
+   "fieldname": "fat",
+   "fieldtype": "Float",
+   "label": "fat"
+  },
+  {
+   "fieldname": "snf",
+   "fieldtype": "Float",
+   "label": "snf"
+  },
+  {
+   "fieldname": "water",
+   "fieldtype": "Float",
+   "label": "water"
+  },
+  {
+   "fieldname": "clr",
+   "fieldtype": "Float",
+   "label": "clr"
+  },
+  {
+   "fieldname": "shift",
+   "fieldtype": "Data",
+   "label": "shift"
+  },
+  {
+   "fieldname": "milk_type",
+   "fieldtype": "Data",
+   "label": "milk type"
+  },
+  {
+   "fieldname": "entry_date",
+   "fieldtype": "Data",
+   "label": "entry date"
+  },
+  {
+   "fieldname": "time",
+   "fieldtype": "Data",
+   "label": "time"
+  },
+  {
+   "fieldname": "rate",
+   "fieldtype": "Float",
+   "label": "rate"
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Float",
+   "label": "amount"
+  },
+  {
+   "fieldname": "column_break_lmds",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-04-13 11:20:00.661979",
+ "modified_by": "Administrator",
+ "module": "Dairy Collection",
+ "name": "Dairy Collection",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

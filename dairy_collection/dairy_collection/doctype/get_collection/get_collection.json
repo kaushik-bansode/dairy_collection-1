@@ -1,0 +1,76 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-04-12 11:06:50.294851",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "shift",
+  "from_date",
+  "to_date",
+  "station_id",
+  "get_collection"
+ ],
+ "fields": [
+  {
+   "fieldname": "shift",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "shift",
+   "options": "M\nE",
+   "reqd": 1
+  },
+  {
+   "fieldname": "from_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "from date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "to_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "to date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "station_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "station id",
+   "reqd": 1
+  },
+  {
+   "fieldname": "get_collection",
+   "fieldtype": "Button",
+   "hidden": 1,
+   "label": "get collection"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-04-13 13:08:40.059640",
+ "modified_by": "Administrator",
+ "module": "Dairy Collection",
+ "name": "Get Collection",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
