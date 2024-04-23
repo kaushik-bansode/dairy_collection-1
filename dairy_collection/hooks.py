@@ -235,4 +235,11 @@ fixtures = [
         ],
     }, 
 
+    {
+        "doctype": "Custom Field",
+        "filters": [
+            ["name", "in", ["GL Entry-custom_party_name","Stock Entry-custom_bulk_material_transfer","Payment Entry-custom_bulk_payment_entry"]],
+        ],
+    }, 
+
 ]
