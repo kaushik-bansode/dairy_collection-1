@@ -227,3 +227,12 @@ app_license = "mit"
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
 
+fixtures = [
+    {
+        "doctype": "Server Script",
+        "filters": [
+            ["name", "in", ["Stock Reorder Pop Up","Reorder Notification Pop Up","Set Party Name in Bulk Payment Entry Details","Set","Set Party Name"]],
+        ],
+    }, 
+
+]
