@@ -2,7 +2,7 @@
 // For license information, please see license.txt
 //  eslint-disable 
 
-frappe.query_reports["Sales Order Summary Script Report - Item and Route wise"] = {
+frappe.query_reports["Sales Order Summary Script Report - Item and Route wise Enabled"] = {
 	"filters": [
 		{
 			fieldname: "from_date",
