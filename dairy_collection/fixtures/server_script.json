@@ -78,5 +78,21 @@
   "reference_doctype": "Stock Entry",
   "script": "mr_doc = frappe.new_doc(\"Material Request\")\r\n\r\n# Initialize a list to hold items that meet the condition\r\nitems_to_append = []\r\n\r\nfor i in doc.get(\"items\"):\r\n  \r\n    if i.item_code and i.s_warehouse and i.actual_qty:\r\n        \r\n        minimum_qty = frappe.db.get_all('Item Reorder', filters={'parent': i.item_code, 'warehouse': i.s_warehouse}, fields=['warehouse_reorder_level', 'warehouse_reorder_qty'])\r\n        \r\n        if minimum_qty and minimum_qty[0]['warehouse_reorder_level'] == i.actual_qty:\r\n            frappe.msgprint(\"Material Request Generated ! You Reached Your Reordered Level Value for Item: \" + str(i.item_code) + \" - \" + str(i.item_name), indicator='orange', title='Warning')\r\n            items_to_append.append({\r\n                \"item_code\": i.item_code,\r\n                \"schedule_date\": doc.posting_date,\r\n                \"qty\": minimum_qty[0]['warehouse_reorder_qty'],\r\n                \"warehouse\": i.s_warehouse,\r\n            })\r\n\r\n# Append items to the Material Request document\r\nfor item in items_to_append:\r\n    mr_doc.append(\"items\", item)\r\n\r\n# If there are items to be appended\r\nif items_to_append:\r\n    mr_doc.insert()\r\n    mr_doc.save()\r\n\r\n    # After saving the Material Request, notify the user\r\n    matreqdoc = frappe.db.get_all(\"Material Request\", fields=[\"name\"], order_by=\"creation DESC\", limit=1)\r\n    matreqdoc_doc = matreqdoc[0].name\r\n    \r\n    users = frappe.get_all(\"User\", filters={\"email\": [\"in\", [\"sonali.kinikar@eprdata.in\",\"tejal.kumbhar@erpdata.in\", \"deepak@bastardairyfarm.com\", \"imrangd@bastardairyfarm.com\", \"shivam@bastardairyfarm.com\", \"gulzar@bastardairyfarm.com\", \"purchase@bastardairyfarm.com\", \"imran@bastardairyfarm.com\"]]}, fields=[\"name\"])\r\n\r\n    for user in users:\r\n        notification_log = frappe.new_doc('Notification Log')\r\n        notification_log.subject = 'Required Material Request done'\r\n        notification_log.message = 'Material Request created'\r\n        notification_log.status = 'Open'\r\n        notification_log.document_type = 'Material Request'\r\n        notification_log.document_name = matreqdoc_doc\r\n        notification_log.for_user = user.name\r\n        notification_log.insert(ignore_permissions=True)\r\n",
   "script_type": "DocType Event"
+ },
+ {
+  "allow_guest": 0,
+  "api_method": null,
+  "cron_format": null,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Server Script",
+  "doctype_event": "Before Submit",
+  "event_frequency": "All",
+  "modified": "2024-05-21 17:53:39.044485",
+  "module": null,
+  "name": "Sales Invoice Lock",
+  "reference_doctype": "Sales Invoice",
+  "script": "\ndairy_details = frappe.get_doc(\"Dairy Settings\")\n\ninvoice_morning_shift = dairy_details.invoice_morning\ninvoice_controller = dairy_details.invoice_controller\ninvoice_evening_shift = dairy_details.invoice_evening_shift\n\nposting_date = doc.posting_date\nposting_time = doc.posting_time\n\n# frappe.throw(str(invoice_morning_shift))\ntodaydate = frappe.utils.today()\n# frappe.throw(str(todaydate))\ncurrent_user_id = frappe.session.user\n# frappe.throw(current_user_id)\nroles = frappe.get_all(\"Has Role\",{'parent':current_user_id},[\"role\"])\nif roles:\n    for i in roles:\n        if i.role != invoice_controller:\n            if posting_date == todaydate:\n                # frappe.msgprint(\"hii match\")\n                if doc.delivery_shift == \"Morning\":\n                    if posting_time > invoice_morning_shift:\n                        frappe.throw(\"Lock Invoice !! You Exceed Invoice Submitting Time\")\n                elif doc.delivery_shift == \"Evening\":\n                    if posting_time > invoice_evening_shift:\n                        frappe.throw(\"Lock Invoice !! You Exceed Invoice Submitting Time\")\n                else:\n                    pass\n# current_datetime = frappe.utils.now()\n",
+  "script_type": "DocType Event"
  }
 ]

@@ -60,6 +60,15 @@ frappe.ui.form.on('Bulk Payment Entry Details', {
 
 
 frappe.ui.form.on('Bulk Payment Entry', {
+	mode_of_payment: function(frm) {
+		frm.call({
+			method:'get_paid_to_account',
+			doc:frm.doc
+		})
+	}
+});
+
+frappe.ui.form.on('Bulk Payment Entry', {
 	invoices: function(frm) {
         frm.clear_table("payment_reference");
 		frm.refresh_field('payment_reference');
