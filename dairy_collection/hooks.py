@@ -231,7 +231,7 @@ fixtures = [
     {
         "doctype": "Server Script",
         "filters": [
-            ["name", "in", ["Stock Reorder Pop Up","Reorder Notification Pop Up","Set Party Name in Bulk Payment Entry Details","Set","Set Party Name"]],
+            ["name", "in", ["Stock Reorder Pop Up","Reorder Notification Pop Up","Set Party Name in Bulk Payment Entry Details","Set","Set Party Name","Sales Invoice Lock"]],
         ],
     }, 
 
@@ -239,6 +239,12 @@ fixtures = [
         "doctype": "Custom Field",
         "filters": [
             ["name", "in", ["GL Entry-custom_party_name","Stock Entry-custom_bulk_material_transfer","Payment Entry-custom_bulk_payment_entry"]],
+        ],
+    }, 
+      {
+        "doctype": "Client Script",
+        "filters": [
+            ["name", "in", ["Set Supplier In Child"]],
         ],
     }, 
 

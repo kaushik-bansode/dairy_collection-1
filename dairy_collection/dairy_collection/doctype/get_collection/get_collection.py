@@ -1,29 +1,38 @@
 import frappe
 import requests
+import json
 from frappe.model.document import Document
 
 class GetCollection(Document):
     
     @frappe.whitelist()
-    def before_save(self,params=None):
+    def before_save(self):
+    
+
         url = 'https://smartx.shivinfotech.co.in/api/mydairy'
-        headers = {'Content-Type': 'application/json'}
-        body = {
-            "Shift": self.shift,
-            "FromDate": self.from_date,
-            "ToDate": self.to_date,
-            "StationId": self.station_id
+        headersList = {
+            "Accept": "*/*",
+            "User-Agent": "Thunder Client (https://www.thunderclient.com)",
+            "Content-Type": "application/json" 
         }
+        payload = json.dumps({
+            "Shift": str(self.shift),
+            "FromDate": str(self.from_date),
+            "ToDate": str(self.to_date),
+            "StationId": str(self.station_id)
+            
+        })
         is_exists = frappe.db.exists('Get Collection',{
             "shift":self.shift,
             "from_date":self.from_date,
             "to_date":self.to_date,
             "station_id":self.station_id
         })
-        
+     
         if not is_exists:
-            response = requests.post(url, json=body, headers=headers)
+            response = requests.request("POST", url, data=payload,  headers=headersList)
             dairy_collections = response.json()
+            
             if response.status_code == 200 and dairy_collections["IsValid"]:
                 if dairy_collections["Data"]!= None:
                     for item in dairy_collections["Data"]:

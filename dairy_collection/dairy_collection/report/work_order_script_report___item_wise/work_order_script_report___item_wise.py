@@ -100,19 +100,20 @@ def get_data(filters):
     item_group =  filters.get('item_group')
     item_code =  filters.get('item_code')
     conditions = []
+
     params = [from_date, to_date]
     # frappe.throw(str(item_code))
 
 
     sql_query = """
             SELECT 
-                DATE(wo.creation) AS 'date',
                 wo.production_item as 'item', 
                 wo.item_name as 'item_name',
                 SUM(wo.produced_qty) as 'qty', 
                 i.item_group as 'item_group'
             FROM `tabWork Order` wo
-            LEFT OUTER JOIN `tabItem` i on wo.production_item = i.item_code
+            LEFT OUTER JOIN 
+                `tabItem` i on wo.production_item = i.item_code
             WHERE 
                 DATE(wo.creation)  BETWEEN %s AND %s
                                             

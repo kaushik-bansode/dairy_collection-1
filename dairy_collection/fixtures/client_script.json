@@ -1,0 +1,13 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "BDF Vehicle Log",
+  "enabled": 1,
+  "modified": "2024-05-16 16:00:27.848213",
+  "module": "Dairy Collection",
+  "name": "Set Supplier In Child",
+  "script": "frappe.ui.form.on('BDF Vehicle Log', {\nsupplier: function(frm) {\n\t\t// your code here\n// \t\tfrappe.msgprint(\"hiiii\")\n        $.each(frm.doc.service_items || [], function(i, service_items) {\n            frappe.model.set_value(service_items.doctype, service_items.name, 'supplier', frm.doc.supplier);\n             \n        });\n    }\n});\n\n ",
+  "view": "Form"
+ }
+]

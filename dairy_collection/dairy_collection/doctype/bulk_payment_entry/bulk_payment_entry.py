@@ -450,7 +450,7 @@ class BulkPaymentEntry(Document):
 	# For Payment Entry creation after Saving Payment Advice Document
 	@frappe.whitelist()
 	def payment_entry(self):
-		for i in self.get("bulk_payment_entry_details"):
+		for i in self.get("bulk_payment_entry_details",{"paid_amount":(">",0)}):
 			
 			doc = frappe.new_doc("Payment Entry")
 			doc.posting_date =self.posting_date
