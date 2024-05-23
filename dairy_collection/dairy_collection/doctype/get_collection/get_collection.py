@@ -1,3 +1,4 @@
+
 import frappe
 import requests
 import json
@@ -5,14 +6,11 @@ from frappe.model.document import Document
 
 class GetCollection(Document):
     
-    @frappe.whitelist()
     def before_save(self):
-    
-
         url = 'https://smartx.shivinfotech.co.in/api/mydairy'
         headersList = {
             "Accept": "*/*",
-            "User-Agent": "Thunder Client (https://www.thunderclient.com)",
+            "User-Agent": "BDF",
             "Content-Type": "application/json" 
         }
         payload = json.dumps({
@@ -28,13 +26,14 @@ class GetCollection(Document):
             "to_date":self.to_date,
             "station_id":self.station_id
         })
-     
+         
+        # frappe.throw("hello")
         if not is_exists:
             response = requests.request("POST", url, data=payload,  headers=headersList)
             dairy_collections = response.json()
-            
+            # frappe.throw(str(dairy_collections))
             if response.status_code == 200 and dairy_collections["IsValid"]:
-                if dairy_collections["Data"]!= None:
+                if dairy_collections["Data"]!= None and dairy_collections["Data"]:
                     for item in dairy_collections["Data"]:
                         doc_exists = frappe.db.exists("Dairy Collection", {
                                             "farmer_id": item["FarmerId"],
@@ -80,6 +79,7 @@ class GetCollection(Document):
                             doc.time = item["Rate"]
                             doc.amount = item["Amount"]
                             doc.insert()
+                            doc.save()
                     frappe.msgprint("Data saved succesfully")
                 else:
                     frappe.throw("No data found")
