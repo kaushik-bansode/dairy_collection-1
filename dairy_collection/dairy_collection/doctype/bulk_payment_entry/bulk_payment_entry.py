@@ -1,6 +1,6 @@
 # Copyright (c) 2024, Erpdata and contributors
 # For license information, please see license.txt
-
+# adding comment for update repository
 import frappe
 from frappe.model.document import Document
 
