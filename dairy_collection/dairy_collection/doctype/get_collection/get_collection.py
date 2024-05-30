@@ -2,6 +2,7 @@
 import frappe
 import requests
 import json
+from datetime import datetime
 from frappe.model.document import Document
 
 class GetCollection(Document):
@@ -42,6 +43,7 @@ class GetCollection(Document):
                                             "shift": item["Shift"]})
                         
                         
+                        
                         if doc_exists:
                             doc = frappe.get_doc("Dairy Collection", {
                                             "farmer_id": item["FarmerId"],
@@ -60,11 +62,15 @@ class GetCollection(Document):
                                 doc.shift : item["Shift"],
                                 doc.milk_type : item["MilkType"],
                                 doc.entry_date : item["EntryDate"],
-                                doc.time : item["Rate"],
+                                doc.rate : item["Rate"],
+                                doc.time: item["Time"],
                                 doc.amount : item["Amount"]
                             })
+                            
+                            
                         else:    
-                            doc = frappe.new_doc('Dairy Collection') 
+                            doc = frappe.new_doc('Dairy Collection')
+                            milk_doc = frappe.new_doc('Milk Entry') 
                             doc.farmer_id = item["FarmerId"]
                             doc.station_id = item["StationId"]
                             doc.sample_no = item["SampleNo"]
@@ -76,10 +82,41 @@ class GetCollection(Document):
                             doc.shift = item["Shift"]
                             doc.milk_type = item["MilkType"]
                             doc.entry_date = item["EntryDate"]
-                            doc.time = item["Rate"]
+                            doc.rate = item["Rate"]
+                            doc.time = item["Time"]
                             doc.amount = item["Amount"]
                             doc.insert()
                             doc.save()
+                            
+                            datetime_obj = datetime.strptime(item["EntryDate"], '%Y-%m-%dT%H:%M:%S')
+                            time_12_hr = datetime.strptime(item["Time"], '%I:%M:%S %p')
+                            time_24hr_format = time_12_hr.strftime('%H:%M:%S')
+                            is_member_exists = frappe.db.exists("Supplier",{"custom_member_id":str(item['FarmerId'])},"name")
+                            # frappe.throw(str(is_member_exists))
+                            if is_member_exists:
+                                if frappe.get_value("Supplier",is_member_exists,"is_mem"):
+                                    milk_doc.dcs_id = frappe.get_value("Supplier",is_member_exists,"dcs")
+                                    milk_doc.member = frappe.get_value("Supplier",is_member_exists,"name")
+                                    milk_doc.milk_type = {"C": "Cow", "B": "Buffalo"}.get(item["MilkType"], "Mix")
+                                    milk_doc.shift = {"M":"Morning", "E":"Evening"}.get(item['Shift'],"Morning")
+                                    milk_doc.date = datetime_obj.date()
+                                    milk_doc.time = time_24hr_format
+                                    milk_doc.volume = 0
+                                    milk_doc.fat = item["Fat"]
+                                    milk_doc.snf = item["Snf"]
+                                    milk_doc.clr = item["Clr"]
+                                    milk_doc.insert()
+                                    milk_doc.save()
+                                    
+                                else:
+                                    frappe.msgprint("Provided supplier is not a member")
+                            else:
+                                frappe.msgprint("No supplier found")
+                            
+                            
+                            
+
+                            
                     frappe.msgprint("Data saved succesfully")
                 else:
                     frappe.throw("No data found")
