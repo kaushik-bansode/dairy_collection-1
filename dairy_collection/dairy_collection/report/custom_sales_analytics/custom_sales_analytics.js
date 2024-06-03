@@ -16,6 +16,7 @@ frappe.query_reports["Custom Sales Analytics"] = {
 				"Territory",
 				"Order Type",
 				"Project",
+			
 			],
 			default: "Customer",
 			reqd: 1,
@@ -60,6 +61,19 @@ frappe.query_reports["Custom Sales Analytics"] = {
 			options: "Company",
 			default: frappe.defaults.get_user_default("Company"),
 			reqd: 1,
+		},
+		{
+			fieldname: "delivery_shift",
+			label: __("Delivery Shift"),
+			fieldtype: "Select",
+			options: [" ","Morning","Evening"],
+		},
+		{
+			fieldname: "warehouse",
+			label: __("Warehouse"),
+			fieldtype: "Link",
+			options: "Warehouse",
+			 
 		},
 		{
 			fieldname: "range",

@@ -6,7 +6,6 @@ from datetime import datetime
 from frappe.model.document import Document
 
 class GetCollection(Document):
-    
     def before_save(self):
         url = 'https://smartx.shivinfotech.co.in/api/mydairy'
         headersList = {
@@ -18,8 +17,7 @@ class GetCollection(Document):
             "Shift": str(self.shift),
             "FromDate": str(self.from_date),
             "ToDate": str(self.to_date),
-            "StationId": str(self.station_id)
-            
+            "StationId": str(self.station_id)  
         })
         is_exists = frappe.db.exists('Get Collection',{
             "shift":self.shift,
@@ -88,20 +86,22 @@ class GetCollection(Document):
                             doc.insert()
                             doc.save()
                             
-                            datetime_obj = datetime.strptime(item["EntryDate"], '%Y-%m-%dT%H:%M:%S')
-                            time_12_hr = datetime.strptime(item["Time"], '%I:%M:%S %p')
-                            time_24hr_format = time_12_hr.strftime('%H:%M:%S')
+                            
                             is_member_exists = frappe.db.exists("Supplier",{"custom_member_id":str(item['FarmerId'])},"name")
-                            # frappe.throw(str(is_member_exists))
                             if is_member_exists:
                                 if frappe.get_value("Supplier",is_member_exists,"is_mem"):
+                                    # frappe.throw(str(frappe.get_value("Supplier",is_member_exists,"is_mem")))
+                                    datetime_obj = datetime.strptime(item["EntryDate"], '%Y-%m-%dT%H:%M:%S')
+                                    time_12_hr = datetime.strptime(item["Time"], '%I:%M:%S %p')
+                                    time_24hr_format = time_12_hr.strftime('%H:%M:%S')
+                                    
                                     milk_doc.dcs_id = frappe.get_value("Supplier",is_member_exists,"dcs")
                                     milk_doc.member = frappe.get_value("Supplier",is_member_exists,"name")
                                     milk_doc.milk_type = {"C": "Cow", "B": "Buffalo"}.get(item["MilkType"], "Mix")
                                     milk_doc.shift = {"M":"Morning", "E":"Evening"}.get(item['Shift'],"Morning")
                                     milk_doc.date = datetime_obj.date()
                                     milk_doc.time = time_24hr_format
-                                    milk_doc.volume = 0
+                                    milk_doc.volume = item["Qty"]
                                     milk_doc.fat = item["Fat"]
                                     milk_doc.snf = item["Snf"]
                                     milk_doc.clr = item["Clr"]
@@ -111,7 +111,7 @@ class GetCollection(Document):
                                 else:
                                     frappe.msgprint("Provided supplier is not a member")
                             else:
-                                frappe.msgprint("No supplier found")
+                                frappe.msgprint(f"No supplier found for <strong>{item['FarmerId']}</strong>")
                             
                             
                             
@@ -124,3 +124,4 @@ class GetCollection(Document):
                 frappe.throw("Failed to fetch")
         else:
             frappe.throw("Data Already Inserted")
+    
