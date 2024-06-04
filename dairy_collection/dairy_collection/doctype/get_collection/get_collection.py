@@ -94,7 +94,7 @@ class GetCollection(Document):
                                     datetime_obj = datetime.strptime(item["EntryDate"], '%Y-%m-%dT%H:%M:%S')
                                     time_12_hr = datetime.strptime(item["Time"], '%I:%M:%S %p')
                                     time_24hr_format = time_12_hr.strftime('%H:%M:%S')
-                                    
+
                                     milk_doc.dcs_id = frappe.get_value("Supplier",is_member_exists,"dcs")
                                     milk_doc.member = frappe.get_value("Supplier",is_member_exists,"name")
                                     milk_doc.milk_type = {"C": "Cow", "B": "Buffalo"}.get(item["MilkType"], "Mix")

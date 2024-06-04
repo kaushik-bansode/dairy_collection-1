@@ -262,9 +262,9 @@ class PartyLedgerSummaryReport:
 				payment_entry_details = frappe.get_doc("Payment Entry", gle.voucher_no)
 				if payment_entry_details.payment_type == ("Receive" if self.filters.party_type == "Customer" else "Pay"):
 					if payment_entry_details.mod_type == 'Bank':
-						self.party_data[gle.party].bank_receipts += gle.get(reverse_dr_or_cr) - gle.get(invoice_dr_or_cr)
+						self.party_data[gle.party].bank_receipts += gle.credit
 					elif payment_entry_details.mod_type == 'Cash':
-						self.party_data[gle.party].cash_receipts += gle.get(reverse_dr_or_cr) - gle.get(invoice_dr_or_cr)
+						self.party_data[gle.party].cash_receipts += gle.credit
 
 			out = []
 		for party, row in self.party_data.items():
