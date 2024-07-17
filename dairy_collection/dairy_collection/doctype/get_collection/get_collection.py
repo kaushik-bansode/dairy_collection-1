@@ -30,7 +30,7 @@ class GetCollection(Document):
         if not is_exists:
             response = requests.request("GET", url, data=payload,  headers=headersList)
             dairy_collections = response.json()
-            frappe.throw(str(dairy_collections))
+            # frappe.throw(str(dairy_collections))
             if response.status_code == 200 and dairy_collections["IsValid"]:
                 if dairy_collections["Data"]!= None and dairy_collections["Data"]:
                     for item in dairy_collections["Data"]:
