@@ -28,9 +28,9 @@ class GetCollection(Document):
          
         # frappe.throw("hello")
         if not is_exists:
-            response = requests.request("POST", url, data=payload,  headers=headersList)
+            response = requests.request("GET", url, data=payload,  headers=headersList)
             dairy_collections = response.json()
-            # frappe.throw(str(dairy_collections))
+            frappe.throw(str(dairy_collections))
             if response.status_code == 200 and dairy_collections["IsValid"]:
                 if dairy_collections["Data"]!= None and dairy_collections["Data"]:
                     for item in dairy_collections["Data"]:
