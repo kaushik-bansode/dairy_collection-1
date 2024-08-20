@@ -28,10 +28,39 @@ frappe.query_reports["Route Wise Sales Analytics"] = {
 		},
 		{
 			fieldname: "item_code",
-			fieldtype: "Link",
-			label: "Item Code",
+			label: __("Item Code"),
+			fieldtype: "MultiSelectList",
 			options: "Item",
-			
+			get_data: function(txt) {
+				return frappe.db.get_link_options("Item", txt);
+			},
+			reqd: 0,
 		},
+		{
+			fieldname: "Warehouse",
+			label: __("Warehouse"),
+			fieldtype: "MultiSelectList",
+			options: "Warehouse",
+			get_data: function(txt) {
+				return frappe.db.get_link_options("Warehouse", txt);
+			},
+			reqd: 0,
+		},
+		{
+			fieldname: "gatepass",
+			label: __("Gate Pass"),
+			fieldtype: "MultiSelectList",
+			options: "Gate Pass",
+			get_data: function(txt) {
+				return frappe.db.get_link_options("Gate Pass", txt);
+			},
+			reqd: 0,
+		},
+		// {
+		// 	fieldname: "item_code",
+		// 	fieldtype: "Link",
+		// 	label: "Item Code",
+		// 	options: "Item",
+		// },
 	]
 };

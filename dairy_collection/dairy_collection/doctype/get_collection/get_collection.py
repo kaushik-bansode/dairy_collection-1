@@ -87,7 +87,8 @@ class GetCollection(Document):
                             doc.save()
                             
                             
-                            is_member_exists = frappe.db.exists("Supplier",{"custom_member_id":str(item['FarmerId'])},"name")
+                            is_member_exists = frappe.db.exists("Supplier",{"custom_member_id":str(item['FarmerId'])})
+                            # frappe.throw(str(frappe.db.exists("Supplier",{"name":"SUP001"})))
                             if is_member_exists:
                                 if frappe.get_value("Supplier",is_member_exists,"is_mem"):
                                     # frappe.throw(str(frappe.get_value("Supplier",is_member_exists,"is_mem")))

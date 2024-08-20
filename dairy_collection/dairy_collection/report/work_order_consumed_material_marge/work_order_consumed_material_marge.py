@@ -103,19 +103,29 @@ def get_fields():
 
 
 def get_filter_condition(report_filters):
-	filters = {
-		"docstatus": 1,
-		"status": ("in", ["In Process", "Completed", "Stopped"]),
-		"creation": ("between", [report_filters.from_date, report_filters.to_date]),
-	}
+    filters = {
+        "docstatus": 1,
+        "status": ("in", ["In Process", "Completed", "Stopped"]),
+        "creation": ("between", [report_filters.from_date, report_filters.to_date]),
+    }
 
-	for field in ["name", "production_item", "company", "status"]:
-		value = report_filters.get(field)
-		if value:
-			key = f"{field}"
-			filters.update({key: value})
+    for field in ["name", "company", "status"]:
+        value = report_filters.get(field)
+        if value:
+            filters[field] = value
 
-	return filters
+    # Handling MultiSelect filter for production_item
+    production_items = report_filters.get("production_item")
+    item_codes = report_filters.get("item_code")
+    if production_items:
+        filters["production_item"] = ("in", production_items)
+       
+    if item_codes:
+        filters["item_code"] = ("in", item_codes)  # No backticks
+
+    return filters
+
+
 
 
 def get_columns():

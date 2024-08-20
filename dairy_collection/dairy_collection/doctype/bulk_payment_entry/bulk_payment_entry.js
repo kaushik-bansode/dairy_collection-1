@@ -191,3 +191,19 @@ frappe.ui.form.on("Bulk Payment Entry", {
 
 
 
+frappe.ui.form.on('Bulk Payment Entry', {
+   
+    before_save: function(frm) {
+        calculate_total(frm);
+    }
+});
+
+function calculate_total(frm) {
+    let total = 0;
+
+    frm.doc.bulk_payment_entry_details.forEach(row => {
+        total += row.paid_amount || 0;
+    });
+
+    frm.set_value('total', total);
+}

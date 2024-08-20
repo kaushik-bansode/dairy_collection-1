@@ -39,19 +39,33 @@ frappe.query_reports["Work Order Consumed Material Marge"] = {
 		// 		};
 		// 	},
 		// },
-		{
-			label: __("Production Item"),
-			fieldname: "production_item",
-			fieldtype: "Link",
-			depends_on: "eval: !doc.name",
-			options: "Item",
-		},
 		// {
-		// 	label: __("Status"),
-		// 	fieldname: "status",
-		// 	fieldtype: "Select",
-		// 	options: ["", "In Process", "Completed", "Stopped"],
+		// 	label: __("Production Item"),
+		// 	fieldname: "production_item",
+		// 	fieldtype: "Link",
+		// 	depends_on: "eval: !doc.name",
+		// 	options: "Item",
 		// },
+		{
+			fieldname: "production_item",
+			label: __("Production Item"),
+			fieldtype: "MultiSelectList",
+			options: "Item",
+			get_data: function(txt) {
+				return frappe.db.get_link_options("Item", txt);
+			},
+			reqd: 0,
+		},
+		{
+			fieldname: "item_code",
+			label: __("Row Item"),
+			fieldtype: "MultiSelectList",
+			options: "Item",
+			get_data: function(txt) {
+				return frappe.db.get_link_options("Item", txt);
+			},
+			reqd: 0,
+		},
 		{
 			label: __("Excess Materials Consumed"),
 			fieldname: "show_extra_consumed_materials",
