@@ -15,6 +15,7 @@ class BulkMaterialTransfter(Document):
 				row.available_qty = doc_name
  
  
+	
  
 	def on_submit(self):
 		self.material_transfer()

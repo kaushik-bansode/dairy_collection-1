@@ -190,7 +190,7 @@ frappe.ui.form.on("Bulk Payment Entry", {
 });
 
 
-
+// enter
 frappe.ui.form.on('Bulk Payment Entry', {
    
     before_save: function(frm) {

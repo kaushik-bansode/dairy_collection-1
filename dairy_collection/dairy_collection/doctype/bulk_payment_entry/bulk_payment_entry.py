@@ -325,6 +325,7 @@ class BulkPaymentEntry(Document):
 				if i.party_type == "Customer" and self.payment_type =="Pay":
 					frappe.throw("Cannot Pay to Customer without any negative outstanding invoice")
 
+
 	@frappe.whitelist()
 	def get_all_porders(self):
 		for i in self.get("bulk_payment_entry_details"):
