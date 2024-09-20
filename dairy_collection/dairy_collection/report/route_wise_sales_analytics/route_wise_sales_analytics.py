@@ -12,20 +12,19 @@ def execute(filters=None):
 
 def get_columns():
     # Get distinct route names for dynamic column generation
-    routes = frappe.db.sql("SELECT name FROM `tabRoute Master`", as_list=True)
+    routes = frappe.db.sql("SELECT name FROM `tabRoute Master` WHERE route_type = %s", ('Milk Marketing',), as_list=True)
     columns = [
         {
             'fieldname': "item_code",
-            'fieldtype': "Link",
+            'fieldtype': "Data",
             'label': "Item Code",
-            'options': "Item",
+             
         },
         {
             'fieldname': "item_name",
             'fieldtype': "Data",
             'label': "Item Name",
         },
-        
     ]
 
     for route in routes:
@@ -40,6 +39,7 @@ def get_columns():
             'fieldtype': "Currency",
             'label': f"Amount ({route_name})",
         })
+    
     columns.append({
         'fieldname': "total_qty",
         'fieldtype': "Float",
@@ -58,10 +58,32 @@ def get_data(filters):
     to_date = filters.get('to_date')
     company = filters.get('company')
     item_code = filters.get('item_code')
-    Warehouse = filters.get('Warehouse')
+    warehouse = filters.get('warehouse')
     gatepass = filters.get('gatepass')
-    conditions = []
-    params = [from_date, to_date, company]
+    
+    conditions = [
+        "x.posting_date BETWEEN %(from_date)s AND %(to_date)s",
+        "x.docstatus = 1",
+        "x.company = %(company)s"
+    ]
+    
+    params = {
+        'from_date': from_date,
+        'to_date': to_date,
+        'company': company
+    }
+
+    if item_code:
+        conditions.append("y.item_code IN %(item_code)s")
+        params['item_code'] = item_code
+        
+    if gatepass:
+        conditions.append("c.parent IN %(gatepass)s")
+        params['gatepass'] = gatepass
+        
+    if warehouse:
+        conditions.append("g.warehouse IN %(warehouse)s")
+        params['warehouse'] = warehouse
 
     sql_query = """
         SELECT
@@ -70,41 +92,23 @@ def get_data(filters):
             y.item_name AS item_name,
             SUM(y.stock_qty) AS qty,
             SUM(y.base_amount) AS amount,
-            g.warehouse AS Warehouse,
-            c.parent as gatepass
+            g.warehouse as warehouse
         FROM
             `tabRoute Master` r
         LEFT JOIN
             `tabSales Invoice` x ON r.name = x.route
         LEFT JOIN
             `tabSales Invoice Item` y ON x.name = y.parent
-        left join 
-            `tabCrate Summary` c on x.name= c.voucher 
-        left join
-            `tabGate Pass`g on g.name = c.parent
+        LEFT JOIN 
+            `tabCrate Summary` c ON x.name = c.voucher 
+        LEFT JOIN
+            `tabGate Pass` g ON g.name = c.parent
         WHERE
-            x.posting_date BETWEEN %s AND %s and x.docstatus = 1 
-            AND x.company = %s
-    """
-    
-    if Warehouse:
-        conditions.append("g.warehouse in %s")
-        params.append(Warehouse)
+            {conditions}
+        GROUP BY r.name, y.item_code, y.item_name,g.warehouse
+    """.format(conditions=" AND ".join(conditions))
 
-    if item_code:
-        conditions.append("y.item_code in %s")
-        params.append(item_code)
-        
-    if gatepass:
-        conditions.append("c.parent in %s")
-        params.append(gatepass)
-
-    if conditions:
-        sql_query += " AND " + " AND ".join(conditions)
-
-    sql_query += " GROUP BY r.name, y.item_code, y.item_name,c.parent"
-
-    data = frappe.db.sql(sql_query, tuple(params), as_dict=True)
+    data = frappe.db.sql(sql_query, params, as_dict=True)
     return data
 
 def pivot_data(raw_data):
@@ -120,17 +124,20 @@ def pivot_data(raw_data):
             }
         route_qty_field = f"qty_{entry['route']}"
         route_amount_field = f"amount_{entry['route']}"
-        pivoted_data[item_key][route_qty_field] = entry.get('qty', 0)
-        pivoted_data[item_key][route_amount_field] = entry.get('amount', 0)
+        if route_qty_field not in pivoted_data[item_key]:
+            pivoted_data[item_key][route_qty_field] = 0
+        if route_amount_field not in pivoted_data[item_key]:
+            pivoted_data[item_key][route_amount_field] = 0
+        pivoted_data[item_key][route_qty_field] += entry.get('qty', 0)
+        pivoted_data[item_key][route_amount_field] += entry.get('amount', 0)
         
         # Summing up the quantities and amounts
         pivoted_data[item_key]['total_qty'] += entry.get('qty', 0)
         pivoted_data[item_key]['total_amount'] += entry.get('amount', 0)
 
-    # Ensure 'total_qty' and 'total_amount' are last in the dictionary
+    # Convert pivoted data to a list of dictionaries
     final_data = []
     for key, data in pivoted_data.items():
-        # Move total_qty and total_amount to the end of the dictionary
         total_qty = data.pop('total_qty')
         total_amount = data.pop('total_amount')
         data['total_qty'] = total_qty
